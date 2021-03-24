@@ -17,8 +17,10 @@ if map == None:
     exit()
 
 user_layer = arcpy.GetParameterAsText(0)#trt00_shp.shp
-#user_field0 = arcpy.GetParameterAsText(1)
-#user_field1 = arcpy.GetParameterAsText(2)
+multi_field = arcpy.GetParameter(1)
+
+for field in multi_field:
+    pass
 
 layer = map.addDataFromPath(user_layer)
 fields_ndarr = arcpy.da.TableToNumPyArray(user_layer, "*", skip_nulls=True)
