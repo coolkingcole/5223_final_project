@@ -12,12 +12,13 @@ Make a arcgis script that can calculate different statistics and analytics from 
 * numpy
 * pandas
 
-# Release1
+# Release 1
 
 ## Basic interface and function
 
-descriptive stats
+Descriptive stats
 
-correlation for multiple feilds
+Correlation for multiple feilds
 
-basic user interface
+Basic user interface
+
