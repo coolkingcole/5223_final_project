@@ -11,6 +11,7 @@ Make a arcgis script that can calculate different statistics and analytics from 
 * matplotlib
 * numpy
 * pandas
+* seaborn
 
 # Release 1
 
