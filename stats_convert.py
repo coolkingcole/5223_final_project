@@ -7,7 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 #from scipy import stats
 
-###these will go in util later
+###these will go in utils.py later
 def arcprint(anything):
     arcpy.AddMessage(type(anything))
     arcpy.AddMessage(anything)
@@ -28,8 +28,6 @@ def correlate2D_ARR(df):
     pass
 
 
-
-
 arcpy.env.overwriteOutput = True
 
 aprx = arcpy.mp.ArcGISProject("CURRENT")
@@ -39,7 +37,10 @@ if map == None:
     arcpy.AddError("Error getting map with aprx.activeMap")
     exit()
 
-user_layer = arcpy.GetParameter(0)#trt00_shp.shp
+user_layer = arcpy.GetParameter(0)
+fieldOfIntrest = arcpy.GetParameter(1)
+arcprint(fieldOfIntrest)
+makePlotBool = arcpy.GetParameter(2)
 #arcprint(user_layer)
 #multi_field = arcpy.GetParameter(1)
 
@@ -77,5 +78,5 @@ arcprint(fields_ndarr.dtype.names)
 df = pd.DataFrame(fields_ndarr['ASpct'])
 arcprint(df)
 #arcprint(df.describe())
-
-makePlot(fields_ndarr,'EnrollTota')
+if makePlotBool:
+    makePlot(fields_ndarr,'EnrollTota')
