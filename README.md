@@ -32,7 +32,7 @@ So far Arcstat will do different analysis depending on how many columns are sele
 # Vision Statemenmt
 For ArgGIS Pro users
 
-**Who** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
+***Who*** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
 
 ***The*** ArcStat plugin is a tool
 
