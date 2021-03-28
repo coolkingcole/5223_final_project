@@ -34,10 +34,10 @@ For ArgGIS Pro users
 
 **Who** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
 
-**The** ArcStat plugin is a tool
+***The*** ArcStat plugin is a tool
 
-**That** can combine multiple statistical and chart drawing functions together to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
+***That*** can combine multiple statistical and chart drawing functions together to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
 
-**Unlike** individual analysis tools in the ArcGIS built-in toolboxes
+***Unlike*** individual analysis tools in the ArcGIS built-in toolboxes
 
-**Our** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
+***Our*** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
