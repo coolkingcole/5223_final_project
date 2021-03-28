@@ -20,6 +20,7 @@ Make a arcgis script that can calculate different statistics and analytics from 
 Descriptive stats  
 Correlation for multiple feilds  
 Basic user interface  
+User Manual
 
 # Fields
 #### (so far)
@@ -30,7 +31,7 @@ Basic user interface
 So far Arcstat will do different analysis depending on how many columns are selected. If one column is selected, descriptive statistics will be printed. If 2 fields are given correlation stats will be printed if more are given...
 
 # Vision Statemenmt
-For ArgGIS Pro users
+***For*** ArgGIS Pro users
 
 ***Who*** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
 
