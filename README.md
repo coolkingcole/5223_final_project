@@ -17,12 +17,27 @@ Make a arcgis script that can calculate different statistics and analytics from 
 
 ## Basic interface and function
 
-Descriptive stats
-
-Correlation for multiple feilds
-
-Basic user interface
+Descriptive stats  
+Correlation for multiple feilds  
+Basic user interface  
 
 # Fields
 #### (so far)
 ![image](./misc_assets/final_params_v0.PNG)
+
+# User Manual
+#todo
+So far Arcstat will do different analysis depending on how many columns are selected. If one column is selected, descriptive statistics will be printed. If 2 fields are given correlation stats will be printed if more are given...
+
+# Vision Statemenmt
+For ArgGIS Pro users
+
+**Who** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
+
+**The** ArcStat plugin is a tool
+
+**That** can combine multiple statistical and chart drawing functions together to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
+
+**Unlike** individual analysis tools in the ArcGIS built-in toolboxes
+
+**Our** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
