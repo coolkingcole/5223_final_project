@@ -12,6 +12,7 @@ Make a arcgis script that can calculate different statistics and analytics from 
 * numpy
 * pandas
 * seaborn
+* scikit-learn
 
 # Release 1
 
@@ -43,5 +44,9 @@ So far Arcstat will do different analysis depending on how many columns are sele
 
 ***Our*** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
 
-# installation  
+# Installation  
+Run ```python -m pip install -r requirements```  
+This should solve any "ModuleNotFoundError: No module named X" errors  
 
+Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223
+[link to docs](/misc_assets/script-tools.html)
