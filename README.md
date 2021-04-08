@@ -48,7 +48,7 @@ So far Arcstat will do different analysis depending on how many columns are sele
 Run ```python -m pip install -r requirements.txt```  
 This should solve any "ModuleNotFoundError: No module named X" errors  
 
-Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223
+Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223.
 [link to docs](/misc_assets/script-tools.html)
 
 # Product backlog  
