@@ -28,7 +28,14 @@ User Manual
 ![image](./misc_assets/final_params_v0.PNG)
 
 # User Manual
-#todo
+## Installation  
+Run ```python -m pip install -r requirements.txt```  
+This should solve any "ModuleNotFoundError: No module named X" errors  
+
+Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223.
+[link to docs](/misc_assets/script-tools.html)
+
+## Usage  
 So far Arcstat will do different analysis depending on how many columns are selected. If one column is selected, descriptive statistics will be printed. If 2 fields are given correlation stats will be printed if more are given...
 
 # Vision Statemenmt
@@ -44,12 +51,7 @@ So far Arcstat will do different analysis depending on how many columns are sele
 
 ***Our*** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
 
-# Installation  
-Run ```python -m pip install -r requirements.txt```  
-This should solve any "ModuleNotFoundError: No module named X" errors  
 
-Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223.
-[link to docs](/misc_assets/script-tools.html)
 
 # Product backlog  
 ## Implemented features  
