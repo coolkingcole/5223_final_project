@@ -52,12 +52,11 @@ So far Arcstat will do different analysis depending on how many columns are sele
 ***Our product*** provides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
 
 
-# Product backlog  
-## Implemented features  
-todo
-## Soon to be implemented features  
-todo
-
 # Release Plan  
-testest
-[Link to Release plan xlsx](/misc_assets/Giraffes_Agile.xlsx)
+[Link To Release Plan xlsx](/misc_assets/Giraffes_Agile.xlsx)  
+
+## Product backlog  
+### Implemented features  
+todo
+### Soon to be implemented features  
+todo
