@@ -57,3 +57,5 @@ So far Arcstat will do different analysis depending on how many columns are sele
 todo
 ## Soon to be implemented features  
 todo
+
+# Release Plan  
