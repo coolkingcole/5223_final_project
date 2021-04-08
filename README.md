@@ -59,3 +59,4 @@ todo
 todo
 
 # Release Plan  
+[Link to Release plan xlsx](/misc_assets/Giraffes Agile.xlsx)
