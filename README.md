@@ -42,3 +42,6 @@ So far Arcstat will do different analysis depending on how many columns are sele
 ***Unlike*** individual analysis tools in the ArcGIS built-in toolboxes
 
 ***Our*** productprovides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
+
+# installation  
+
