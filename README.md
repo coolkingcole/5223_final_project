@@ -55,8 +55,8 @@ So far Arcstat will do different analysis depending on how many columns are sele
 # Release Plan  
 [Link To Release Plan xlsx](/misc_assets/Giraffes_Agile.xlsx)  
 
-## Product backlog  
-### Implemented features  
+### Product backlog  
+#### Implemented features  
 todo
-### Soon to be implemented features  
+#### Soon to be implemented features  
 todo
