@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Script Tools &lt;a name&equals;&quot;TOP&quot;&gt;&lt;&sol;a&gt;</title>
+        <style>
+</style>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="script-tools-">Script Tools <a name="TOP"></a></h1>
+<p><strong>Prof N Xiao</strong></p>
+<hr>
+<p><a name="TOC"></a>
+<a href="#creating-script-tools">Creating script tools</a><br>
+<a href="#Run-the-first-script-tool">Running the first script tool</a><br>
+<a href="#set-up-script-editor">Setting up script editor</a><br>
+<a href="#writing-python-code">Writing Python code</a><br>
+<a href="#use-messages">Using messages</a><br>
+<a href="#add-geoprocessing-tools">Adding geoprocessing tools</a><br>
+<a href="#path-and-workspace">Path and workspace</a><br>
+<a href="#add-more-parameters">Adding more parameters</a><br>
+<a href="#last-piece-of-the-code">Last piece of the code</a>
+<a href="#documenting">Documenting geoprocessing tools</a><br>
+<a href="#sharing">Sharing the tool as a geoprocessing package</a><br>
+<a href="#using-geoprocessing-packages">Using geoprocessing packages</a><br>
+<a href="#license">License considerations</a><br>
+<a href="#summary">Summary</a></p>
+<hr>
+<p>We have used Python to write stand alone programs to handle spatial data. This is convenient for tasks that don't rely much user input. But it doesn't have a graphical user interface to allow the user to input the parameters and see the results. Also, stand alone programs don't connect with ArcGIS Pro and therefore is limited in presenting (mapping) the input and output of the program.</p>
+<p>In ArcGIS (Pro or Desktop), Python code can be used to create geoprocessing tools as either <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/a-quick-tour-of-creating-script-tools.htm">script tools (a.k.a. custom toolboxes)</a> or <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/a-quick-tour-of-python-toolboxes.htm">Python toolboxes</a>. The outcome (i.e., the tool itself) is about the same, but the two approaches differ in how the tools are made. We will only be working on script tools in this class. For the differences of these two types of toolboxes, please see <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/comparing-custom-and-python-toolboxes.htm">this The outcome (i.e., the tool itself) is about the same, but the two approaches differ in how the tools are made. site</a>, and we will also summarize some of the differences at the end of this tutorial.</p>
+<p>Before we start to create our own tools, let's make sure we understand a few things about geoprocessing (and other kinds of) tools in ArcGIS Pro. We should especially know the following things. Please use the links below to see what these concepts mean.</p>
+<ul>
+<li><a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/understanding-script-tool-parameters.htm">Parameters</a></li>
+<li><a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/understanding-the-progress-dialog-in-script-tools.htm">Progressor</a></li>
+<li><a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/understanding-messaging-in-script-tools.htm">Messages</a></li>
+</ul>
+<p>Our <strong>overall goal</strong> is to create a toolbox using the code we have already worked on from the previous tutorials when we clip circular buffers on census tracts to compute the total population falling in the buffers. The whole program will require four inputs, including</p>
+<ul>
+<li>the point features (libraries),</li>
+<li>polygon features (tracts),</li>
+<li>a population table, and</li>
+<li>a radius in miles.</li>
+</ul>
+<p>Our tool will have two kinds of output:</p>
+<ul>
+<li>a feature class of the percent of the population living within the specified radius from the libraries, and</li>
+<li>the percent of the population in the buffer.</li>
+</ul>
+<p>At the end of this tutorial, we should develop a tool similar to the one below. The interface of the tool is shown in the right panel, which should be familiar to us because it resembles a typical geoprocessing tool in ArcGIS Pro or ArcGIS Desktop.</p>
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/clip-buffer-interface-3a.png" alt=""></p>
+<p>We assume ArcGIS Pro version 2.4 (the version installed on our lab computers) for this tutorial. Older or newer versions may have different detailed steps though the overall flow will be the same.</p>
+<p><a name="creating-script-tools"></a></p>
+<h2 id="creating-script-tools-">Creating script tools <a href="#TOP">⇧</a></h2>
+<p>To start, let's launch <strong>ArcGIS Pro</strong> and have a project open.</p>
+<p>In the <strong>Catalog Pane</strong>. The Catalog Pane is normally on the right side of the window. If it is not there, click on View and then Catalog Pane to show it. In the pane, Double-click on the list label called <strong>ToolBoxes</strong> (or lick on the triangle on the right of the label) to show the content, where we should see something like <em>MyProject1.tbx</em> (depending how we name the project). Right-click on the <strong>tbx</strong> file and choose <strong>New &gt; Script</strong>.</p>
+<p>This opens a <em>New Script</em> dialog with three tabs on the left. We will fill out the items in the <strong>General</strong> tab this time with the following information:</p>
+<p><strong>Name:</strong> ClipBuffer<br>
+<strong>Label:</strong> Clip and buffer tool<br>
+<strong>Script File:</strong> <code>clip_buffer_tool.py</code></p>
+<!-- **Script File:** `C:\Temp\clip_buffer_tool.py` -->
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/script-tools-parameters0.png" alt=""></p>
+<p>Note that in the Script File box, we just enter the name of a Python file. The file will be automatically stored in the project folder (e.g., <code>C:\Users\xiao.37\Documents\ArcGIS\Projects\MyProject1\clip_buffer_tool.py</code>). We can also provide the full path to the Python file if we want the file to be stored in a specific folder (e.g., <code>C:\Temp\clip_buffer_tool.py</code>). Either way, this will be the file that we will working on. The file will not be generated at this moment, but later when we actually write the code. Sometimes, we may have the Python code already and we can click on the folder icon to navigate to that file to choose it (this is not the case for now).</p>
+<!-- CONFUSING: However, it seems that the dialog does not allow us to navigate to a folder and enter a file name that doesn't exist. By default, navigating the folders this way may assume that we are going to use an existing file. This is not our case: we will work on the Python file later. So we will first determine the folder (or just use the default one) and then directly enter the folder path and the non-existing file name in the box.  -->
+<p>Now we click on  <strong>Parameters</strong> and enter the necessary parameters for our tool. More information about the parameters can be found at <a href="http://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/basics/create-a-python-script-tool.htm">here</a>. When done with one parameter, an empty next parameter should be inserted automatically underneath and we can just click on the Label cell to start adding a new parameter. We will enter five parameters at this time and when it is done, the dialog should look like this.</p>
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/script-tools-parameters1a.png" alt=""></p>
+<!-- ![](script-tools-parameters1.png) -->
+<p>The first two parameters are feature layers, meaning we will be able to select the feature layers that are already added to ArcGIS Pro, and we can also navigate (by clicking the folder icon to the right of the dropdown list) to a feature class that hasn't been loaded. So this is a great feature for the tool. We can further make sure the user will only specify the right type of layers listed by specifying the Filter. When doing this for the first parameter (Point features), the system will pop out a small <em>Feature Type Filter dialog</em> and we will make sure to check only the Point and Multipoint options. We will use the Polygon option as the Filter for the second parameter.</p>
+<p>Now click on the <strong>OK</strong> button to save the tool, and we should see our newly created script tool is nicely listed under the Toolboxes category.</p>
+<p><a name="Run-the-first-script-tool"></a></p>
+<h2 id="running-the-first-script-tool-">Running the first script tool <a href="#TOP">⇧</a></h2>
+<p>In ArcGIS Pro, we can load the shapefiles and the table for the libraries into the project. (Note that it will be fine if we don't load them, because we can also specify the data sources required by the tool by clicking the folder icon on the right to each input box.)</p>
+<p>Now <strong>double click</strong> on the new tool and its interface will show in the Geoprocessing pane. This is just like using any other geoprocessing tools. We can play with any of the input/output options. The output by default is a feature class in the default geodatabase for the project, which should be the preferred option because we we know from the previous tutorials, this option will automatically create useful fields like the area for polygons. We can even click on the <strong>Run</strong> button. Running the tool now will yield an error that says the script for the tool does not exist, which shouldn't be a surprise because we haven't got any code run -- recall the .py file is not generated yet and we can check that by looking at the project folder.</p>
+<p>One thing that should become clear right now is that we are designing the new tool to be more generic than just computing the percentage of library customers falling in the buffers. This tool can actually be used for more applications as long as the overall procedure fits the task. Keep this in mind and we will see how the coding and further changes will reflect this goal.</p>
+<p>It is time to enjoy the coffee ☕ before moving on to the next step.</p>
+<p><a name="set-up-script-editor"></a></p>
+<h2 id="setting-up-script-editor-">Setting up script editor <a href="#TOP">⇧</a></h2>
+<p>Now we do the coding part incrementally. We will first tell ArcGIS Pro how we want to edit our Python file for the tool.</p>
+<p>The Python file we specified in the above steps can be edited using any editor. We must use an editor outside ArcGIS Pro since there is no embedded editor. ArcGIS Pro provides a way to link the editor so that it can launch the editor when we want to edit the Python file. To set the editor, click Project &gt; Options &gt; Geoprocessing. In the text box under <strong>Script Editor</strong>, we have a few options depending on which editor is more preferred. To use IDLE as the editor, enter the following line and then click on the OK button.</p>
+<p><code>C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\Scripts\idle.exe</code></p>
+<p>The above is the default but the actual path and file name can be different depending how ArcGIS Pro is installed. Our previous tutorial on how to start arcpy has detailed information about how to use IDLE for arcpy.</p>
+<p>If Visual Studio Code or Atom or other editors is preferred, we can find their path and enter that. For example, if atom is installed locally, we can enter something like this:</p>
+<p><code>C:\Users\xiao\AppData\Local\atom\atom.exe</code></p>
+<p>Again, each editor will do the same job: editing the Python file. So the choice will be really of a personal preference.</p>
+<p><a name="writing-python-code"></a></p>
+<h2 id="writing-python-code-">Writing Python code <a href="#TOP">⇧</a></h2>
+<p>We can open the Python file by right clicking on the script tool in the Catalog pane and choose <strong>Edit</strong>. This should bring up the editor we choose from the above step, with an empty file. We can now add the following lines of code in the editor:</p>
+<pre><code class="language-python"><div><span class="hljs-keyword">import</span> arcpy
+
+in_features_point = arcpy.GetParameterAsText(<span class="hljs-number">0</span>)
+in_features_polygon = arcpy.GetParameterAsText(<span class="hljs-number">1</span>)
+in_table_population = arcpy.GetParameterAsText(<span class="hljs-number">2</span>)
+in_radius = float(arcpy.GetParameterAsText(<span class="hljs-number">3</span>))
+out_features_clipbuffer = arcpy.GetParameterAsText(<span class="hljs-number">4</span>)
+</div></code></pre>
+<p>It is very important to make sure the order of the above function calls matches the order of the parameters we specify in the tool. However, the names used here don't have to match the names used when we create the tool. It is fine to use the default names when we create the script tool using the dialog because we don't have to think too much about coding at that point. But when we actually write the code, it is a good idea to think more carefully about the names because this time the names will stick and intuitive and meaningful names will help in a long run. The convention used here is to make sure the name tells us the direction (in or out), type (features or tables, etc.), and content type (point, polygon, etc.). We may or may not be religious about the convention all the time. But overall, names should tell the stories.</p>
+<p>Let's save the file in the editor. But we don't need to close the editor -- we will make changes soon. We just need to save it to make the changes effective.</p>
+<p>Now, run the tool in ArcGIS Pro. This time it should &quot;run&quot; without any errors. But we should not expect the output feature class to be generated because our code hasn't got anything working on the output. We are about to change that.</p>
+<p><a name="use-messages"></a></p>
+<h2 id="using-messages-">Using messages <a href="#TOP">⇧</a></h2>
+<p>We continue to work on the code in the editor.</p>
+<p>We use Message in ArcPy (see more at <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/writing-messages-in-script-tools.htm">here</a>) as a tool of communication. Unless otherwise specified, we always add new code to the end of the previous code. Let's add the following line:</p>
+<pre><code class="language-python"><div>arcpy.AddMessage(<span class="hljs-string">&#x27;&#x27;&#x27;Here are the specified -
+    \tParameter 1: {0}
+    \tParameter 2: {1}
+    \tRadius: {2}
+    \tOutput features: {3}&#x27;&#x27;&#x27;</span>\
+    .format(in_features_point, in_features_polygon, in_radius, out_features_clipbuffer))
+</div></code></pre>
+<p>Save the file and run the tool in ArcGIS Pro again.</p>
+<p>At the bottom of the Geoprocessing pane, there should be a small window that reports the tool is completed. We can hover on the link of <em>View Details</em> to bring out a popup window that shows the details, where we should see our message there. We can also click on the &quot;Open History&quot; link to see it (and the previous results as well).</p>
+<p>This is good progress since now we are able to get the parameters from the interface and we also have a way to communicate with the user.</p>
+<p>Now we need to add some code to actually working on the data. But before we go there, let's see some of the default settings in the environments to make sure if we need to do anything. These are the runtime parameters so we don't know what they are until the program is run. We add the following line to report some runtime parameters:</p>
+<pre><code class="language-python"><div>arcpy.AddMessage(<span class="hljs-string">&#x27;&#x27;&#x27;Environments -
+    \tWorkspace: {0}
+    \tOverwrite: {1}
+    \tScratch GDB: {2}
+    \tPackage workspace: {3}&#x27;&#x27;&#x27;</span>\
+    .format(arcpy.env.workspace, arcpy.env.overwriteOutput, \
+        arcpy.env.scratchGDB, arcpy.env.packageWorkspace))
+</div></code></pre>
+<p>Admittedly, the name <code>scratchGDB</code> is intriguing. We will explain that later.</p>
+<p>Run the tool, and we can see that the workspace is the default workspace associated with the project. Also <code>overwriteOutput</code> is set to <code>True</code> (by default), which is also what we want. If we want to make sure this is always the case (someone might set it to False manually), we can always add the following line to the file:</p>
+<pre><code class="language-python"><div>arcpy.env.overwriteOutput = <span class="hljs-literal">True</span>
+</div></code></pre>
+<p><a name="add-geoprocessing-tools"></a></p>
+<h2 id="adding-geoprocessing-tools">Adding geoprocessing tools</h2>
+<p>We now add the use of the buffer and clip tools to our code:</p>
+<pre><code class="language-Python"><div>out_features_buffer = arcpy.env.scratchGDB + <span class="hljs-string">&#x27;/lib_buffer&#x27;</span>
+buffer_distance = <span class="hljs-string">&#x27;{0} Miles&#x27;</span>.format(in_radius)
+arcpy.Buffer_analysis(in_features_point, out_features_buffer, buffer_distance)
+arcpy.Clip_analysis(in_features_polygon, out_features_buffer, out_features_clipbuffer, <span class="hljs-string">&#x27;&#x27;</span>)
+</div></code></pre>
+<p><strong>Run</strong> this one again and we should see the resulting feature class is created and added to the map. We should see circles with partial tracts inside on the map.</p>
+<p><a name="path-and-workspace"></a></p>
+<h2 id="path-and-workspace-">Path and workspace <a href="#TOP">⇧</a></h2>
+<p>The code above uses something new: the output is stored in a special geodatabase referred to as <code>scratchGDB</code>. Now we provide a further discussion about the issue of where to store the results.</p>
+<p>There are two kinds of outputs we are dealing with: those that are intermediate and final. Intermediate results are dispensable and we don't want to crowd our meaningful workspace with those things. The final results are meant to be kept, but we also want to overwrite them because the same tool may be used multiple times and we sometimes (if not always) don't care much about the names (and yet don't want to have too many results in the workspace for the same tasks). We should avoid the use of hard-coded path like <code>C:\temp\</code> for the output since these paths may not exist on other computers and therefore may cause error. In ArcGIS Pro, each tool must have a project to start with and will have a number of default workspaces in that project.</p>
+<p>For intermediate results, we will utilize the scratch GDB. The GDB will be created if it doesn't exist (see <a href="http://pro.arcgis.com/en/pro-app/tool-reference/environment-settings/scratch-gdb.htm">here</a> for more details). This means we are guaranteed to have access to this GDB. When we use ArcGIS Pro, the GDB called scratch.gdb will be created in the project folder. If we run arcpy from outside ArcGIS Pro, a temporary folder will be used and the GDB called scratch.gdb will be created there. The environment of scratchDDB is read only, meaning it is automatically fixed and cannot be set by users (we can only use it). There is also a <a href="http://desktop.arcgis.com/en/arcmap/10.3/tools/environments/scratch-folder.htm">scratch folder</a>, but being a folder, it is suitable to dump results in shapefile formats, which cannot be overwritten and will cause problems too. The folder may not exist when the project is first created, but it will be automatically created whenever we want to use it or see it.</p>
+<p>Note that it is possible to set a <a href="https://pro.arcgis.com/en/pro-app/latest/tool-reference/environment-settings/scratch-workspace.htm">scratch workspace</a>. Similar to any workspace, this workspace does not need to be under the project folder. Also, the workspace may not exist and will not automatically be generated. In ArcGIS Pro, by default the scratch workspace environment is as same as the workspace of the project GDB. But in Python shell the default scratch workspace (as well as the general workspace) is empty. So it is possible to use a scratch workspace, but we must check if it is there. If it doesn't exist, then we need to create it first.</p>
+<p>The following are some experiments about these items. We can run the code in both Python window in ArcGIS Pro and in shell (as below). Note that the scratch workspace is None.</p>
+<pre><code class="language-python"><div><span class="hljs-meta">&gt;&gt;&gt; </span><span class="hljs-keyword">import</span> arcpy
+<span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.env.scratchWorkspace
+<span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.env.scratchFolder
+<span class="hljs-string">&#x27;C:\\Users\\xiao.37\\AppData\\Local\\Temp\\13\\ArcGISProTemp29112\\scratch&#x27;</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.env.scratchGDB
+<span class="hljs-string">&#x27;C:\\Users\\xiao.37\\AppData\\Local\\Temp\\13\\ArcGISProTemp29112\\scratch.gdb&#x27;</span>
+</div></code></pre>
+<!-- For the final result, it can be tricky. We will actually see how this works. But in general, we don't want to have our final result end up with some workspace that doesn't exist. We will use the default workspace in our code, which is the workspace that share the same name of the project. But when we share the tool with other people, we will notice the default workspace for the final output becomes different, though still working. We can of course change than through the tool's interface. -->
+<p><a name="add-more-parameters"></a></p>
+<h2 id="adding-more-parameters-">Adding more parameters <a href="#TOP">⇧</a></h2>
+<p>We have just reached a major milestone: we got the tool successfully run using two geoprocessing tools. Now we should think about the final result of our tool: we need to compute the percentage of population within the radius. Through our previous tutorial, we know that we will need to join the population table to the last output and then use a cursor to loop through the rows to compute the sum of proportional population.</p>
+<p>The join tool will need a common field between two input tables. It would be great if the use can specify the fields. For this reason, we add two more parameters to the tool, which will change the interface and therefore some additional code will be needed.</p>
+<p>We first work on the new interface. In the Catalog Pane, right click on our tool and select <strong>Properties</strong>.</p>
+<p>We add <strong>four new parameters</strong> as shown in the last four rows (excluding the empty row at the end) in the following figure. It is important to specify the Dependency of these new fields. This will allow ArcGIS to automatically fill out the values when the inputs they depend are entered. We can also set default values of the parameters, which will improve the usability of the tool. Here we set the radius value to 1 by default.</p>
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/script-tool-properties-2a.png" alt=""></p>
+<!-- ![](script-tool-properties-2.png) -->
+<p>The interface can work now. But the parameters can be better organized with some logical grouping. We can change the order of the parameters by either right-clicking on the row number and choose Move Up or Move Down or by clicking and dragging the number of each row. There can be different narratives to justify the way the interface is designed. The one below simply groups each feature class with its own attributes.</p>
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/script-tool-properties-3a.png" alt=""></p>
+<!-- ![](script-tool-properties-3.png) -->
+<p>Click OK when we are done. We can now fire up the tool again to see how the two field inputs will be filled out automatically once we specify the proper input for the polygons and table. It is not the time to run the code at this moment since the parameters need to be correctly passed to the code. (It is fine to click on the Rub button, but we will see an error related to the radius value.)</p>
+<h2 id="getting-new-parameters-">Getting new parameters <a href="#TOP">⇧</a></h2>
+<p>Because of the above change, the order of the parameters is changed and we should change our code accordingly. Also there is a new radius default value, which needs to be coded too. Replace the five lines of code where we use <code>arcpy.GetParameterAsText</code> with the following lines:</p>
+<pre><code class="language-python"><div>in_features_point = arcpy.GetParameterAsText(<span class="hljs-number">0</span>)
+in_radius = float(arcpy.GetParameterAsText(<span class="hljs-number">1</span>))
+in_features_polygon = arcpy.GetParameterAsText(<span class="hljs-number">2</span>)
+in_field_join_features = arcpy.GetParameterAsText(<span class="hljs-number">3</span>)
+in_field_oldarea = arcpy.GetParameterAsText(<span class="hljs-number">4</span>)
+in_table_population = arcpy.GetParameterAsText(<span class="hljs-number">5</span>)
+in_field_join_table = arcpy.GetParameterAsText(<span class="hljs-number">6</span>)
+in_field_pop = arcpy.GetParameterAsText(<span class="hljs-number">7</span>)
+out_features_clipbuffer = arcpy.GetParameterAsText(<span class="hljs-number">8</span>)
+</div></code></pre>
+<p>Now the code should run correctly if we click on the Run button. It should be noted that there is no need to &quot;quit&quot; the geoprocessing tool and relaunch it. Every time we click the Run button, the Python code will be reloaded so we start from scratch.</p>
+<p><a name="last-piece-of-the-code"></a></p>
+<h2 id="last-piece-of-the-code-">Last piece of the code <a href="#TOP">⇧</a></h2>
+<p>Now we finish by adding the following lines of code. These are meant to do the join and compute the percent. The final result will be shown as a message.</p>
+<pre><code class="language-python"><div>arcpy.JoinField_management(out_features_clipbuffer, in_field_join_features, \
+                           in_table_population, in_field_join_table, [in_field_pop])
+
+cursor = arcpy.da.SearchCursor(out_features_clipbuffer, \
+                               [in_field_oldarea, <span class="hljs-string">&#x27;Shape_Area&#x27;</span>, in_field_pop])
+total_service = <span class="hljs-number">0</span>
+<span class="hljs-keyword">for</span> row <span class="hljs-keyword">in</span> cursor:
+    pop = row[<span class="hljs-number">1</span>]/row[<span class="hljs-number">0</span>]*row[<span class="hljs-number">2</span>]
+    total_service += pop
+
+cursor = arcpy.da.SearchCursor(in_table_population, [in_field_pop])
+total_pop = <span class="hljs-number">0</span>
+cursor.reset()
+<span class="hljs-keyword">for</span> row <span class="hljs-keyword">in</span> cursor:
+    total_pop += row[<span class="hljs-number">0</span>]
+
+arcpy.AddMessage(<span class="hljs-string">&#x27;Total population served: {}&#x27;</span>.format(int(total_service)))
+arcpy.AddMessage(<span class="hljs-string">&#x27;Percent of service: {}&#x27;</span>.format(int(<span class="hljs-number">100</span>*total_service/total_pop)))
+</div></code></pre>
+<p>The final output along with the tool interface is shown in the following figure.</p>
+<p><img src="file:////home/xiao/teaching/5223-design-implementation/workshops/arcpy/clip-buffer-interface-3a.png" alt=""></p>
+<p>It is time for more ☕ coffee.</p>
+<p><a name="documenting"></a></p>
+<h2 id="documenting-geoprocessing-tools-">Documenting geoprocessing tools <a href="#TOP">⇧</a></h2>
+<p>The tool we just developed can be shared with the world. To do so, we must complete the metadata of the tool, which is the mandatory part of tool development in ArcGIS Pro.</p>
+<p>There are many good reasons for <a href="https://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/basics/document-a-custom-tool.htm">documenting</a> a development project, and it would even become a bonus if the documentation can become part of the help system. In each geoprocessing tool (or any tool from the toolbox), there is a question mark icon on the upper-right corner of the window, also, once we move the mouse over a parameter, a little blue information icon (with the letter i in it) will appear. Moving the mouse over these icons will trigger a window with descriptions about either the tool or the parameter. Popup windows like this and its contents are enabled by a metadata. The metadata also become part of the tool description that allows users to read more about the tool.</p>
+<p>We should never underestimate the powers of metadata. This statement should not even be disputed.</p>
+<p>In the catalog pane, right click on the tool (clip and butter tool) and choose <strong>Edit metadata</strong>. This will bring up a new window in the middle (or it maybe docked but can be moved to any position in the window). We can enter information about the metadata of the tool. Within the window is a metadata template, which provides some required fields, but also gives us enough room to improvise with different content or even different style.</p>
+<p>The metadata for an &quot;actual tool&quot; will need to include more details. Of course, it's not the length we are talking about here, it's the content that needs to be detailed, and more importantly, meaningful. For our tutorial, however, we will keep the metadata relatively short, and hopefully still meaningful. Again, metadata is mandatory. We will not be able to share the tool with anyone without a completed metadata. A complete metadata includes filling out all the fields presented in the template. We don't prescribe anything specific for the content, but again all fields need to be filled.</p>
+<p>When all the fields are finished, click on the <strong>Metadata</strong> tab at the top of the window and then click <strong>Save</strong>.</p>
+<p><a name="sharing"></a></p>
+<h2 id="sharing-the-tool-as-a-geoprocessing-package-">Sharing the tool as a geoprocessing package <a href="#TOP">⇧</a></h2>
+<p>With the metadata completed and saved, it is time to run the tool again and make sure that the tool runs successfully. Now click on the Catalog pane and then the <strong>History</strong> tab in the pane. In the list of the history, right-click on the latest (or any) successful runs of the tool and navigate to <strong>Save As &gt; Geoprocessing Package</strong>. This will bring up the Geoprocessing Package pane. Fill out the information for the Summary and Tags text boxes. Then click on the <strong>Analyze</strong> button. A progressor will pop up and then close when it is done analyzing the content of the package. We should make sure there are no errors or warnings. Then we can click on the <strong>Package</strong> button to generate the package file, which will have an extension name of <strong>.gpkx</strong>. The default folder for the package is in the ArcGIS folder under Documents (such as <code>C:\Users\xiao\Documents\ArcGIS</code>). This process will compress everything we have in the tool (code, data, metadata, etc.) into a single file that is ready to share with other users. It will overwrite the existing packages with the same name without warning. The .gpkx file is actually just a .zip file so we can open it using software tools like 7-Zip or WinZip.</p>
+<p><a name="using-geoprocessing-packages"></a></p>
+<h2 id="using-geoprocessing-packages-">Using geoprocessing packages <a href="#TOP">⇧</a></h2>
+<p>The .gpkx file can be shared with anyone who may want to use the tool. To try this, let's switch to a different project in ArcGIS Pro. For the sake of illustrating the process, we assume the new project is called MyProject3, but any project that is different from the one we use to develop the tool will be good (it is fine to put it under the same folder where it is developed, but that doesn't really serve our purpose here). We will copy the file ClipBuffer.gpkx from the ArcGIS folder under Documents to the new project's folder, which can be something like <code>C:\Users\xiao\Documents\ArcGIS\Projects\MyProject3</code>.</p>
+<p>In the ArcGIS Pro <strong>Catalog</strong> pane, expand the <strong>Folders</strong> and then MyProject3 (or other project name). The package should be listed there. If not, right click on MyProject3 and choose Refresh. Then, right click on the package and choose <strong>Add To Project</strong>. Then click on the <strong>History</strong> tab in the Catalog pane we should find the tool listed there and is ready to run. The default path to the output feature class is in the package workspace that looks like this: <code>%packageWorkspace%\myproject1.gdb\public_library_shp_ClipBuffe6</code>, where the actual value of variable <code>%packageWorkspace%</code> can be something like this <code>C:\Users\xiao\Documents\ArcGIS\Packages\ClipBuffer_XXXX\p20\</code>. We can change it to the GDB of the current project using the Browse tool next to the text box.</p>
+<p>To run the tool in MyProject3, we will need to either specify the inputs, which can be either the source shapefiles or the feature classes that are packaged with the tool (explore a folder like <code>C:\Users\xiao\Documents\ArcGIS\Packages\ClipBuffer_XXXX\commondata\</code>). After the tool finishes, a new folder called scratch.gdb will be created in the MyProject3 folder, where the intermediate feature class can be found (through ArcGIS Pro).</p>
+<p><a name="license"></a></p>
+<h2 id="license-considerations-">License considerations <a href="#TOP">⇧</a></h2>
+<p>(We will not include this part in our code, but it is useful to know the background information about license types in ArcGIS.)</p>
+<p>ArcGIS Pro (and other versions as well) has different license types, basic, standard, and advanced. Each type entails different sets of tools that are available. In addition to that, different extensions also have license types. More information about this topic can be found <a href="http://pro.arcgis.com/en/pro-app/get-started/licensing-arcgis-pro.htm">here</a>. This may affects the function of the tool. For example, if a tool requires functions that can only be available under, the program will throw an error. It will be important to make sure that the functions used in any tool can work on the computer where the tool is loaded. There are ArcPy functions that check the license.</p>
+<p>We can check if a specific ArcGIS license is available. Each license is encoded differently (such as ArcInfo, ArcEdit, etc.) and the codes can be found at <a href="http://pro.arcgis.com/en/pro-app/arcpy/functions/checkproduct.htm">here</a>. The following is just an example of using one of such functions that checks ArcGIS license:</p>
+<pre><code class="language-python"><div><span class="hljs-keyword">import</span> arcpy
+<span class="hljs-keyword">if</span> arcpy.CheckProduct(<span class="hljs-string">&quot;ArcInfo&quot;</span>) == <span class="hljs-string">&quot;Available&quot;</span>:
+    print(<span class="hljs-string">&#x27;ArcGIS for Desktop Advanced license is available&#x27;</span>)
+    <span class="hljs-comment"># Do something under this license</span>
+<span class="hljs-keyword">else</span>:
+    print(<span class="hljs-string">&#x27;ArcGIS for Desktop Advanced license not available&#x27;</span>)
+    <span class="hljs-comment"># return or exit</span>
+</div></code></pre>
+<p>and it returns the following text on one of the machines:</p>
+<pre><code><code><div>ArcGIS for Desktop Advanced license is available
+</div></code></code></pre>
+<p>To check extensions, we will need to use the extension codes, which can be found at <a href="http://pro.arcgis.com/en/pro-app/arcpy/functions/checkextension.htm">here</a>. The following function will return a string value depending on the situation.</p>
+<pre><code class="language-python"><div><span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.CheckExtension(<span class="hljs-string">&#x27;3D&#x27;</span>)
+<span class="hljs-string">&#x27;Available&#x27;</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.CheckExtension(<span class="hljs-string">&#x27;Spatial&#x27;</span>)
+<span class="hljs-string">&#x27;Available&#x27;</span>
+<span class="hljs-meta">&gt;&gt;&gt; </span>arcpy.CheckExtension(<span class="hljs-string">&#x27;StreetMap&#x27;</span>)
+<span class="hljs-string">&#x27;NotLicensed&#x27;</span>
+</div></code></pre>
+<p><a name="summary"></a></p>
+<h2 id="summary-">Summary <a href="#TOP">⇧</a></h2>
+<p>Now we have seen how to create a script tool in ArcGIS Pro. As we mentioned before, this is one of the two ways to create tools in ArcGIS Pro. So what is the other way? That other way is to create a Python Toolbox. Confusing names indeed! They reflect the legacy of different approaches in the product's history. The latter (Python Toolbox) means that we will be able to control everything in Python code, unlike the example we just saw where a lot of the things we do are controlled through the use of a dialog from the Catalog. Also, the script tools (like the one we just did) can support languages other than just Python. But a Python Toolbox, as the name tells, only support Python. <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/comparing-custom-and-python-toolboxes.htm">Here</a> is an official comparison between the two kinds of tools. A Python Toolbox starts with a template that defines the structure of the tool in Python classes. We will not discuss more on Python Toolbox, to learn more about this, please start at <a href="http://pro.arcgis.com/en/pro-app/arcpy/geoprocessing_and_python/creating-a-new-python-toolbox.htm">this page</a>, where the links on the left side will guide through the process.</p>
+<p>We will learn a similar technique of Python Toolbox in the QGIS platform.</p>
+<p>Also, it is possible to use Model Builder to develop a tool (see <a href="https://pro.arcgis.com/en/pro-app/help/analysis/geoprocessing/modelbuilder/what-is-modelbuilder-.htm">here</a> for more information). A model can be exported as Python code, which can then be used to create a script tool.</p>
+<p>(R) 2019, 2020, 2021</p>
+
+    </body>
+    </html>
