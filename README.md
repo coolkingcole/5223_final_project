@@ -37,7 +37,7 @@ So far Arcstat will do different analysis depending on how many columns are sele
 
 ***The*** ArcStat plugin is a tool
 
-***That*** can combine multiple statistical and chart drawing functions together to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
+***That*** can present descriptive statistics and correlation of multiple fields in the form of chart to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
 
 ***Unlike*** individual analysis tools in the ArcGIS built-in toolboxes
 
