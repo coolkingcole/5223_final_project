@@ -1,6 +1,6 @@
 # ArcStat (5223 Final Project)  
 
-Final project for 5223
+Final project for 5223 from the group Wild Skipping Giraffes.
 
 # Idea
 
