@@ -41,15 +41,15 @@ So far Arcstat will do different analysis depending on how many columns are sele
 # Vision Statemenmt
 ***For*** ArgGIS Pro users
 
-***Who*** need to analyze data and find many different descriptive statistics and correlations between multiple data sources.
+***Who*** need to analyze data and find many different descriptive statistics and correlations between multiple data sources  
 
 ***The*** ArcStat plugin is a tool
 
-***That*** can present descriptive statistics and correlation of multiple fields in the form of chart to give the user as much information about the data they are attempting to analyze and give useful output to power further analysis in ArcGIS or other tools
+***That*** need to analyze data and find many different descriptive statistics and correlations between multiple data sources  
 
 ***Unlike*** individual analysis tools in the ArcGIS built-in toolboxes
 
-***Our*** product provides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
+***Our product*** provides all these statistical analysis in one place in an intuitive way that can output information to the user or to formats that can be used in other tools.
 
 
 # Product backlog  
