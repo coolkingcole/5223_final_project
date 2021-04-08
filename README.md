@@ -1,4 +1,4 @@
-# 5223 Final Project ArcStat
+# ArcStat (5223 Final Project)  
 
 Final project for 5223
 
