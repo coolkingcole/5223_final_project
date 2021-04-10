@@ -69,7 +69,7 @@ def arcgis_table_to_dataframe(in_fc, input_fields, query="", skip_nulls=False, n
 arcpy.env.overwriteOutput = True
 aprx = arcpy.mp.ArcGISProject("CURRENT")
 map = aprx.activeMap
-if map == None:
+if map is None:
     arcpy.AddError("Error getting map with aprx.activeMap")
     exit()
 
