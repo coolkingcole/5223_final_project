@@ -143,23 +143,27 @@ elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
 
 elif len(fieldsOfInterest+fieldsOfInterest2) > 2:
     arcprint("greater than 2 fields hit")
-    #fields = []
-    #for f in fieldsOfInterest:
-    #    fields.append(f)
-    #for f in fieldsOfInterest2:
-    #    fields.append(f)
+    fields1 = []
+    fields2 = []
+    for f in fieldsOfInterest:
+        fields1.append(str(f))
+    for f in fieldsOfInterest2:
+        fields2.append(str(f))
     #todo make sure only wanted fields are shown
     if user_layer2_text == "":
-        df = arcgis_table_to_df(layer)
+        #df = arcgis_table_to_df(layer)
+        df = pd.DataFrame(fields_ndarr, columns = fields1)
         # plotting correlation heatmap
         dataplot=sb.heatmap(df.corr())
         # displaying heatmap
         plt.show()
     else:
-        df = arcgis_table_to_df(layer)
-        df2 = arcgis_table_to_df(layer2)
-        bigdata = df.append(df2, ignore_index=True)
+        #df = arcgis_table_to_df(layer)
+        #df2 = arcgis_table_to_df(layer2)
+        df = pd.DataFrame(fields_ndarr, columns = fields1)
+        df2 = pd.DataFrame(fields_ndarr2, columns = fields2)
+        bigdf = df.append(df2, ignore_index=True)
         # plotting correlation heatmap
-        dataplot=sb.heatmap(bigdata.corr())
+        dataplot=sb.heatmap(bigdf.corr())
         # displaying heatmap
         plt.show()
