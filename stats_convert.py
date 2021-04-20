@@ -84,14 +84,17 @@ fieldsOfInterest2 = arcpy.GetParameter(3)
 #arcprint(fieldsOfInterest[0])
 makePlotBool = arcpy.GetParameter(4)
 layer = map.addDataFromPath(user_layer)
-arcprint(user_layer_text)
-arcprint(user_layer2_text)
+#arcprint(user_layer_text)
+#arcprint(user_layer2_text)
 
 #fields_ndarr = arcpy.da.TableToNumPyArray(layer, "*", skip_nulls=True)
 fields_ndarr = arcpy.da.FeatureClassToNumPyArray(layer, ('*'))#<class 'numpy.ndarray'>
 if user_layer2_text != "":
     layer2 = map.addDataFromPath(user_layer2)
     fields_ndarr2 = arcpy.da.FeatureClassToNumPyArray(layer2, ('*'))#<class 'numpy.ndarray'>
+    #fields_ndarr = np.concatenate([fields_ndarr,fields_ndarr2])
+    #fields_ndarr=np.hstack([fields_ndarr, fields_ndarr2])
+
 
 if len(fieldsOfInterest+fieldsOfInterest2) == 1:
     arcprint("1 field hit")
@@ -116,11 +119,20 @@ elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
         fields.append(f)
     for f in fieldsOfInterest2:
         fields.append(f)
-    df = pd.DataFrame(fields_ndarr, columns = [str(fields[0]),str(fields[1])])
+    
+    if user_layer2_text == "":
+        df = pd.DataFrame(fields_ndarr, columns = [str(fields[0]),str(fields[1])])
+        column_1 = df[str(fields[0])]
+        column_2 = df[str(fields[1])]
+    else:
+        df = pd.DataFrame(fields_ndarr, columns = [str(fields[0])])
+        df2 = pd.DataFrame(fields_ndarr2, columns = [str(fields[1])])
+        column_1 = df[str(fields[0])]
+        column_2 = df2[str(fields[1])]
+        #arcprint(df.to_string())
     #df = pd.DataFrame(fields_ndarr, columns=fields_ndarr.class_names)
-    column_1 = df[str(fields[0])]
-    column_2 = df[str(fields[1])]
-    arcprint(column_1)
+    
+    #arcprint(column_1)
     pearson_correlation = column_1.corr(column_2,method='pearson')
     arcprint(pearson_correlation)
     pearson_correlation = column_1.corr(column_2,method='kendall')
