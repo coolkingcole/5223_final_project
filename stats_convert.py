@@ -83,14 +83,20 @@ fieldsOfInterest = arcpy.GetParameter(2)
 fieldsOfInterest2 = arcpy.GetParameter(3)
 #arcprint(fieldsOfInterest[0])
 makePlotBool = arcpy.GetParameter(4)
-layer = map.addDataFromPath(user_layer)
+try:
+    layer = map.addDataFromPath(user_layer)
+except:
+    layer = user_layer
 #arcprint(user_layer_text)
 #arcprint(user_layer2_text)
 
 #fields_ndarr = arcpy.da.TableToNumPyArray(layer, "*", skip_nulls=True)
 fields_ndarr = arcpy.da.FeatureClassToNumPyArray(layer, ('*'))#<class 'numpy.ndarray'>
 if user_layer2_text != "":
-    layer2 = map.addDataFromPath(user_layer2)
+    try:
+        layer2 = map.addDataFromPath(user_layer2)
+    except:
+        layer2 = user_layer2
     fields_ndarr2 = arcpy.da.FeatureClassToNumPyArray(layer2, ('*'))#<class 'numpy.ndarray'>
     #fields_ndarr = np.concatenate([fields_ndarr,fields_ndarr2])
     #fields_ndarr=np.hstack([fields_ndarr, fields_ndarr2])
