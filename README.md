@@ -25,7 +25,7 @@ User Manual
 
 # Fields
 #### (so far)
-![image](./misc_assets/final_params_v0.PNG)
+![image](./misc_assets/final_params_v1.PNG)
 
 # User Manual
 ### Installation  
