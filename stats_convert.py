@@ -75,43 +75,47 @@ if map is None:
 
 #Params
 user_layer = arcpy.GetParameter(0)
-fieldsOfIntrest = arcpy.GetParameter(1)
-arcprint(fieldsOfIntrest[0])
-makePlotBool = arcpy.GetParameter(2)
-#arcprint(user_layer)
-#multi_field = arcpy.GetParameter(1)
+user_layer2 = arcpy.GetParameter(1)
+user_layer_text = arcpy.GetParameterAsText(0)#used to check if none
+user_layer2_text = arcpy.GetParameterAsText(1)#used to check if none
 
-"""
-for field in multi_field:
-    pass
-"""
-
+fieldsOfInterest = arcpy.GetParameter(2)
+fieldsOfInterest2 = arcpy.GetParameter(3)
+#arcprint(fieldsOfInterest[0])
+makePlotBool = arcpy.GetParameter(4)
 layer = map.addDataFromPath(user_layer)
+arcprint(user_layer_text)
+arcprint(user_layer2_text)
+
 #fields_ndarr = arcpy.da.TableToNumPyArray(layer, "*", skip_nulls=True)
 fields_ndarr = arcpy.da.FeatureClassToNumPyArray(layer, ('*'))#<class 'numpy.ndarray'>
+if user_layer2_text != "":
+    layer2 = map.addDataFromPath(user_layer2)
+    fields_ndarr2 = arcpy.da.FeatureClassToNumPyArray(layer2, ('*'))#<class 'numpy.ndarray'>
 
-if len(fieldsOfIntrest) == 1:
+if len(fieldsOfInterest+fieldsOfInterest2) == 1:
     arcprint("1 field hit")
-    #rho = np.corrcoef(fields_ndarr[str(fieldsOfIntrest[0])])
+    #rho = np.corrcoef(fields_ndarr[str(fieldsOfInterest[0])])
     
     ####this works
-    #df = pd.DataFrame(fields_ndarr[str(fieldsOfIntrest[0])])
+    #df = pd.DataFrame(fields_ndarr[str(fieldsOfInterest[0])])
     #describe1D_ARR(df)
     ####
     #######This one is nicer
     df2 = arcgis_table_to_df(layer)
-    describe1D_ARR(df2[str(fieldsOfIntrest[0])])
+    describe1D_ARR(df2[str(fieldsOfInterest[0])])
     
     if makePlotBool:
-        makePlot(fields_ndarr,str(fieldsOfIntrest[0]))
+        makePlot(fields_ndarr,str(fieldsOfInterest[0]))
 
-elif len(fieldsOfIntrest) == 2:
+elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
     arcprint("2 fields hit")
     
     fields = []
-    for f in fieldsOfIntrest:
+    for f in fieldsOfInterest:
         fields.append(f)
-
+    for f in fieldsOfInterest2:
+        fields.append(f)
     df = pd.DataFrame(fields_ndarr, columns = [str(fields[0]),str(fields[1])])
     #df = pd.DataFrame(fields_ndarr, columns=fields_ndarr.class_names)
     column_1 = df[str(fields[0])]
@@ -125,10 +129,10 @@ elif len(fieldsOfIntrest) == 2:
     arcprint(pearson_correlation)
     
 
-elif len(fieldsOfIntrest) > 2:
+elif len(fieldsOfInterest+fieldsOfInterest2) > 2:
     arcprint("greater than 2 fields hit")
     fields = []
-    for f in fieldsOfIntrest:
+    for f in fieldsOfInterest:
         fields.append(f)
     
     df2 = arcgis_table_to_df(layer)
