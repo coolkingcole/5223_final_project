@@ -12,7 +12,6 @@ Make a arcgis script that can calculate different statistics and analytics from 
 * numpy
 * pandas
 * seaborn
-* scikit-learn
 
 # Release 1
 
