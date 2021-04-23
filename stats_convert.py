@@ -97,8 +97,8 @@ user_layer1 = arcpy.GetParameter(1)
 user_layer0_text = arcpy.GetParameterAsText(0)#used to check if none
 user_layer1_text = arcpy.GetParameterAsText(1)#used to check if none
 
-fieldsOfInterest = arcpy.GetParameter(2)
-fieldsOfInterest2 = arcpy.GetParameter(3)
+fieldsOfInterest0 = arcpy.GetParameter(2)
+fieldsOfInterest1 = arcpy.GetParameter(3)
 
 makePlotBool = arcpy.GetParameter(4)
 try:
@@ -116,35 +116,35 @@ if user_layer1_text != "":
 
 
 
-if len(fieldsOfInterest+fieldsOfInterest2) == 1:
+if len(fieldsOfInterest0+fieldsOfInterest1) == 1:
     arcprint("1 field hit")
     ####this works
-    #df = pd.DataFrame(fields_ndarr0[str(fieldsOfInterest[0])])
+    #df = pd.DataFrame(fields_ndarr0[str(fieldsOfInterest0[0])])
     #describe1D_ARR(df)
-    df2 = arcgis_table_to_df(layer0)
-    describe1D_ARR(df2[str(fieldsOfInterest[0])])
+    df0 = arcgis_table_to_df(layer0)
+    describe1D_ARR(df0[str(fieldsOfInterest0[0])])
     
     if makePlotBool:
-        makePlot(fields_ndarr0,str(fieldsOfInterest[0]))
+        makePlot(fields_ndarr0,str(fieldsOfInterest0[0]))
 
-elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
+elif len(fieldsOfInterest0+fieldsOfInterest1) == 2:
     arcprint("2 fields hit")
     
     fields = []
-    for f in fieldsOfInterest:
-        fields.append(f)
-    for f in fieldsOfInterest2:
-        fields.append(f)
+    for f in fieldsOfInterest0:
+        fields.append(str(f))
+    for f in fieldsOfInterest1:
+        fields.append(str(f))
     
     if user_layer1_text == "":
-        df = pd.DataFrame(fields_ndarr0, columns = [str(fields[0]),str(fields[1])])
+        df = pd.DataFrame(fields_ndarr0, columns = [fields[0],fields[1]])
         column_1 = df[str(fields[0])]
         column_2 = df[str(fields[1])]
     else:
-        df = pd.DataFrame(fields_ndarr0, columns = [str(fields[0])])
-        df2 = pd.DataFrame(fields_ndarr1, columns = [str(fields[1])])
-        column_1 = df[str(fields[0])]
-        column_2 = df2[str(fields[1])]
+        df = pd.DataFrame(fields_ndarr0, columns = [fields[0]])
+        df2 = pd.DataFrame(fields_ndarr1, columns = [fields[1]])
+        column_1 = df[fields[0]]
+        column_2 = df2[fields[1]]
 
     pearson_correlation = column_1.corr(column_2,method='pearson')
     arcprint(pearson_correlation)
@@ -154,17 +154,18 @@ elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
     arcprint(pearson_correlation)
     
 
-elif len(fieldsOfInterest+fieldsOfInterest2) > 2:
+elif len(fieldsOfInterest0+fieldsOfInterest1) > 2:
     arcprint("greater than 2 fields hit")
+    fields0 = []
     fields1 = []
-    fields2 = []
-    for f in fieldsOfInterest:
+    for f in fieldsOfInterest0:
+        fields0.append(str(f))
+    for f in fieldsOfInterest1:
         fields1.append(str(f))
-    for f in fieldsOfInterest2:
-        fields2.append(str(f))
+
     if user_layer1_text == "":
         #df = arcgis_table_to_df(layer)
-        df = pd.DataFrame(fields_ndarr0, columns = fields1)
+        df = pd.DataFrame(fields_ndarr0, columns = fields0)
         # plotting correlation heatmap
         dataplot=sb.heatmap(df.corr())
         # displaying heatmap
@@ -172,8 +173,8 @@ elif len(fieldsOfInterest+fieldsOfInterest2) > 2:
     else:
         #df = arcgis_table_to_df(layer)
         #df2 = arcgis_table_to_df(layer1)
-        df = pd.DataFrame(fields_ndarr0, columns = fields1)
-        df2 = pd.DataFrame(fields_ndarr1, columns = fields2)
+        df = pd.DataFrame(fields_ndarr0, columns = fields0)
+        df2 = pd.DataFrame(fields_ndarr1, columns = fields1)
         bigdf = df.append(df2, ignore_index=True)
         # plotting correlation heatmap
         dataplot=sb.heatmap(bigdf.corr())
