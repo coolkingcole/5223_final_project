@@ -3,11 +3,7 @@ from arcpy import env
 import numpy as np
 import pandas as pd
 #import geopandas#uncomment for pandas
-
 import matplotlib.pyplot as plt
-#from scipy import stats
-from sklearn.linear_model import LinearRegression
-
 
 import seaborn as sb
 ###these will go in utils.py later
@@ -87,8 +83,6 @@ try:
     layer = map.addDataFromPath(user_layer)
 except:
     layer = user_layer
-#arcprint(user_layer_text)
-#arcprint(user_layer2_text)
 
 #fields_ndarr = arcpy.da.TableToNumPyArray(layer, "*", skip_nulls=True)
 fields_ndarr = arcpy.da.FeatureClassToNumPyArray(layer, ('*'))#<class 'numpy.ndarray'>
@@ -109,8 +103,6 @@ if len(fieldsOfInterest+fieldsOfInterest2) == 1:
     ####this works
     #df = pd.DataFrame(fields_ndarr[str(fieldsOfInterest[0])])
     #describe1D_ARR(df)
-    ####
-    #######This one is nicer
     df2 = arcgis_table_to_df(layer)
     describe1D_ARR(df2[str(fieldsOfInterest[0])])
     
@@ -135,10 +127,7 @@ elif len(fieldsOfInterest+fieldsOfInterest2) == 2:
         df2 = pd.DataFrame(fields_ndarr2, columns = [str(fields[1])])
         column_1 = df[str(fields[0])]
         column_2 = df2[str(fields[1])]
-        #arcprint(df.to_string())
-    #df = pd.DataFrame(fields_ndarr, columns=fields_ndarr.class_names)
-    
-    #arcprint(column_1)
+
     pearson_correlation = column_1.corr(column_2,method='pearson')
     arcprint(pearson_correlation)
     pearson_correlation = column_1.corr(column_2,method='kendall')
@@ -155,7 +144,6 @@ elif len(fieldsOfInterest+fieldsOfInterest2) > 2:
         fields1.append(str(f))
     for f in fieldsOfInterest2:
         fields2.append(str(f))
-    #todo make sure only wanted fields are shown
     if user_layer2_text == "":
         #df = arcgis_table_to_df(layer)
         df = pd.DataFrame(fields_ndarr, columns = fields1)
