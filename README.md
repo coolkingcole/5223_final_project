@@ -24,7 +24,6 @@ Basic user interface
 User Manual
 
 # Fields
-#### (so far)
 ![image](./misc_assets/final_params_v3.PNG)
 
 # User Manual
