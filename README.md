@@ -38,9 +38,9 @@ The gpkx file finalv*.gpkx in this repo is the package for our tools ArcStat
 ### Usage  
 So far Arcstat will do different analysis depending on how many columns are selected.  
 ***If*** one column is selected, descriptive statistics will be printed.  
-***If** 2 fields are given correlation stats will be printed.  
+***If*** 2 fields are given correlation stats will be printed.  
 ***If*** greater than two fields are given the correlation statistics will be printed.  
-***If*** the \"MakePlot\" check box is checked a matplotlib graph will be shown.....  
+***If*** the \"MakePlot\" check box is checked a matplotlib graph will be shown for 2 fields and a correlation heatmap if greater than 2 fields are given.  
 
 # Vision Statement
 ***For*** ArgGIS Pro users
