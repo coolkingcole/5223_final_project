@@ -2,37 +2,22 @@ import arcpy
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import copy
+import seaborn as sb
 
-
-###these will go in utils.py later
 def arcprint(anything):
-    arcpy.AddMessage(type(anything))
+    #arcpy.AddMessage(type(anything))
     arcpy.AddMessage(anything)
 
-
-def makePlot(ndarr, field, msg):
-    title = 'Plot of ' + field
-    plt.xlabel(msg)
-    plt.ylabel(field)
-    plt.title(title)
-    plt.plot(ndarr[field])
+def makePlot(ndarr,field):
+    plt.plot(fields_ndarr0[field])
     plt.show()
 
-
-def ndarr2Pd(ndarr, field):
+def ndarr2Pd(ndarr,field):
     df = pd.DataFrame(ndarr[field])
     return df
 
-
 def describe1D_ARR(df):
     arcprint(df.describe())
-
-
-def correlate2D_ARR(df):
-    # arcpy.AddMessage(df_describe.describe())
-    pass
-
 
 def arcgis_table_to_df(in_fc, input_fields=None, query=""):
     """Function will convert an arcgis table into a pandas dataframe with an object ID index, and the selected
@@ -46,11 +31,10 @@ def arcgis_table_to_df(in_fc, input_fields=None, query=""):
         final_fields = [OIDFieldName] + input_fields
     else:
         final_fields = [field.name for field in arcpy.ListFields(in_fc)]
-    data = [row for row in arcpy.da.SearchCursor(in_fc, final_fields, where_clause=query)]
-    fc_dataframe = pd.DataFrame(data, columns=final_fields)
-    fc_dataframe = fc_dataframe.set_index(OIDFieldName, drop=True)
+    data = [row for row in arcpy.da.SearchCursor(in_fc,final_fields,where_clause=query)]
+    fc_dataframe = pd.DataFrame(data,columns=final_fields)
+    fc_dataframe = fc_dataframe.set_index(OIDFieldName,drop=True)
     return fc_dataframe
-
 
 def arcgis_table_to_dataframe(in_fc, input_fields, query="", skip_nulls=False, null_values=None):
     """Function will convert an arcgis table into a pandas dataframe with an object ID index, and the selected
@@ -71,13 +55,12 @@ def arcgis_table_to_dataframe(in_fc, input_fields, query="", skip_nulls=False, n
     fc_dataframe = pd.DataFrame(np_array, index=object_id_index, columns=input_fields)
     return fc_dataframe
 
-
 def df_append(df1, df2):
     """Function will append two pandas dataframe.
     :param - df1 - Input pandas dataframe
     :param - df2 - Input pandas dataframe
     :returns - A new pandas dataframe with all columns of two input pandas dataframe"""
-    result = copy.deepcopy(df1)
+    result = df1.copy()
     for col_name in df2.columns.tolist():
         result[col_name] = df2[col_name]
     return result
@@ -100,7 +83,6 @@ def corranalysis(df, method):
     df_corr = df.corr(method=method, min_periods=1)
     return df_corr
 
-
 arcpy.env.overwriteOutput = True
 aprx = arcpy.mp.ArcGISProject("CURRENT")
 map = aprx.activeMap
@@ -108,85 +90,103 @@ if map is None:
     arcpy.AddError("Error getting map with aprx.activeMap")
     exit()
 
-# Params
-user_layer = arcpy.GetParameter(0)
-fieldsOfInterest = arcpy.GetParameter(1)
-user_layer1 = arcpy.GetParameter(2)
-user_layer1_text = arcpy.GetParameterAsText(2)
+#Params
+user_layer0 = arcpy.GetParameter(0)
+user_layer1 = arcpy.GetParameter(1)
+user_layer0_text = arcpy.GetParameterAsText(0)#used to check if none
+user_layer1_text = arcpy.GetParameterAsText(1)#used to check if none
+
+fieldsOfInterest0 = arcpy.GetParameter(2)
 fieldsOfInterest1 = arcpy.GetParameter(3)
+
 makePlotBool = arcpy.GetParameter(4)
-
 try:
-    layer = map.addDataFromPath(user_layer)
+    layer0 = map.addDataFromPath(user_layer0)
 except:
-    layer = user_layer
+    layer0 = user_layer0
 
-fields_ndarr = arcpy.da.FeatureClassToNumPyArray(layer, ('*'))  # <class 'numpy.ndarray'>
-fields_ndarr1 = []
+fields_ndarr0 = arcpy.da.FeatureClassToNumPyArray(layer0, ('*'))#<class 'numpy.ndarray'>
 if user_layer1_text != "":
     try:
         layer1 = map.addDataFromPath(user_layer1)
     except:
         layer1 = user_layer1
-    fields_ndarr1 = arcpy.da.FeatureClassToNumPyArray(layer1, ('*'))  # <class 'numpy.ndarray'>
+    fields_ndarr1 = arcpy.da.FeatureClassToNumPyArray(layer1, ('*'))#<class 'numpy.ndarray'>
 
-if len(fields_ndarr1) > 0:
-    minlen = min(len(fields_ndarr), len(fields_ndarr1))
-    if len(fields_ndarr) > minlen:
-        fields_ndarr = fields_ndarr[:minlen]
-    if len(fields_ndarr1) > minlen:
-        fields_ndarr1 = fields_ndarr1[:minlen]
-fields = []
-for f in fieldsOfInterest:
-    fields.append(str(f))
-fields1 = []
-if len(fields_ndarr1) > 0:
-    for f in fieldsOfInterest1:
-        fields1.append(str(f))
 
-df = pd.DataFrame(fields_ndarr, columns=fields)
 
-df2 = df
-if len(fields_ndarr1) > 0:
-    df1 = pd.DataFrame(fields_ndarr1, columns=fields1)
-    df2 = df_append(df, df1)
-fields2 = df2.columns.tolist()  # calculate fields here to drop duplicated fields
+if len(fieldsOfInterest0+fieldsOfInterest1) == 1:
+    arcprint("1 field hit")
+    ####this works
+    #df = pd.DataFrame(fields_ndarr0[str(fieldsOfInterest0[0])])
+    #describe1D_ARR(df)
+    df0 = arcgis_table_to_df(layer0)
+    fieldSTR = str(fieldsOfInterest0[0])
 
-if len(fields2) == 1:
-    column1 = df2[fields2[0]]
+    column1 = df0[fieldSTR]
     max1 = column1.max()
     min1 = column1.min()
     mean1 = column1.mean()
     median1 = column1.median()
     std1 = column1.std()
-    linemsg = 'max:{:.2f},min:{:.2f},mean:{:.4f},median:{:.4f},std:{:.4f}'.format(max1, min1, mean1, median1, std1)
-    arcpy.AddMessage('For ' + fields2[0] + ',' + linemsg)
-    if makePlotBool:
-        makePlot(df2, fields2[0], linemsg)
 
-elif len(fields2) == 2:
-    column_1 = df2[fields2[0]]
-    column_2 = df2[fields2[1]]
+    linemsg = 'max:{:.2f},\nmin:{:.2f},\nmean:{:.4f},\nmedian:{:.4f},\nstd:{:.4f}'.format(max1, min1, mean1, median1, std1)
+    arcpy.AddMessage('For ' + fieldSTR + ',\n' + linemsg)
+    
+    if makePlotBool:
+        makePlot(df0, fieldSTR)
+
+elif len(fieldsOfInterest0+fieldsOfInterest1) == 2:
+    arcprint("2 fields hit")
+    
+    fields = []
+    for f in fieldsOfInterest0:
+        fields.append(str(f))
+    for f in fieldsOfInterest1:
+        fields.append(str(f))
+    
+    if user_layer1_text == "":
+        df = pd.DataFrame(fields_ndarr0, columns = [fields[0],fields[1]])
+        column_1 = df[str(fields[0])]
+        column_2 = df[str(fields[1])]
+    else:
+        df = pd.DataFrame(fields_ndarr0, columns = [fields[0]])
+        df2 = pd.DataFrame(fields_ndarr1, columns = [fields[1]])
+        column_1 = df[fields[0]]
+        column_2 = df2[fields[1]]
+
     pearson_correlation = column_1.corr(column_2, method='pearson')
-    corr_title = 'Pearson\'s Correlation = {:.4f}'.format(pearson_correlation)
+    #corr_title = 'Pearson\'s Correlation = {:.4f}'.format(pearson_correlation)
     arcpy.AddMessage(
-        "Pearson correlation coefficient between {} and {} is:{}\n".format(fields2[0],
-                                                                           fields2[1], pearson_correlation))
-    pearson_correlation = column_1.corr(column_2, method='kendall')
+        "Pearson correlation coefficient between {} and {} is:{}\n".format(fields[0],
+                                                                           fields[1], pearson_correlation))
+    kendall_correlation = column_1.corr(column_2, method='kendall')
     arcpy.AddMessage(
-        "Kendall correlation coefficient between {} and {} is:{}\n".format(fields2[0], fields2[1], pearson_correlation))
+        "Kendall correlation coefficient between {} and {} is:{}\n".format(fields[0], fields[1], kendall_correlation))
 
-    pearson_correlation = column_1.corr(column_2, method='spearman')
+    spearman_correlation = column_1.corr(column_2, method='spearman')
     arcpy.AddMessage(
-        "Spearman correlation coefficient between {} and {} is:{}\n".format(fields2[0],
-                                                                            fields2[1], pearson_correlation))
-    if makePlotBool:
-        arcpy.AddMessage("Draw plot of {} versus {}\n".format(fields2[1], fields2[0]))
-        makePlot2(df2, fields2[0], fields2[1], corr_title)
+        "Spearman correlation coefficient between {} and {} is:{}\n".format(fields[0],
+                                                                            fields[1], spearman_correlation))
 
-
-elif len(fields2) > 2:
-    # todo make sure only wanted fields are shown
+elif len(fieldsOfInterest0+fieldsOfInterest1) > 2:
+    arcprint("greater than 2 fields hit")
+    fields0 = []
+    fields1 = []
+    for f in fieldsOfInterest0:
+        fields0.append(str(f))
+    for f in fieldsOfInterest1:
+        fields1.append(str(f))
+    
+    fields2 = fields0 + fields1
+    if user_layer1_text == "":
+        df0 = pd.DataFrame(fields_ndarr0, columns = [fields2[0],fields2[1]])
+        df2 = df0
+    else:
+        df0 = pd.DataFrame(fields_ndarr0, columns = fields0)
+        df1 = pd.DataFrame(fields_ndarr1, columns = fields1)
+        df2 = df_append(df0, df1)
+    
     corr = corranalysis(df2, 'pearson')
     arcpy.AddMessage(
         "Pearson correlation coefficient for fields {} is:\n{}\n".format(fields2, corr))
@@ -198,14 +198,18 @@ elif len(fields2) > 2:
         "Spearman correlation coefficient for fields {} is:\n{}\n".format(fields2, corr))
 
     if makePlotBool:
-        try:
-            import seaborn as sb
-
-            arcpy.AddMessage("Draw heatmap for fields {}\n".format(fields2))
+        arcpy.AddMessage("Draw heatmap for fields {}\n".format(fields2))
+        
+        if user_layer1_text == "":
+            df0 = pd.DataFrame(fields_ndarr0, columns = fields0)
+            # plotting correlation heatmap
+            dataplot=sb.heatmap(df0.corr(), annot=True, fmt=".4f")
+        else:
+            df0 = pd.DataFrame(fields_ndarr0, columns = fields0)
+            df1 = pd.DataFrame(fields_ndarr1, columns = fields1)
+            df2 = df0.append(df1, ignore_index=True)
             # plotting correlation heatmap
             dataplot = sb.heatmap(df2.corr(), annot=True, fmt=".4f")
-            # displaying heatmap
-            plt.title('Heatmap of Pearson correlation coefficient')
-            plt.show()
-        except Exception:
-            arcpy.AddWarning("Package seaborn is not installed, heatmap can not be generated!")
+        # displaying heatmap
+        plt.title('Heatmap of Pearson correlation coefficient')
+        plt.show()
