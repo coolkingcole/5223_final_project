@@ -34,7 +34,7 @@ This should solve any "ModuleNotFoundError: No module named X" errors
 Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223.
 [link to docs](/misc_assets/script-tools.html)
 
-The gpkx file finalv*.gpkx in this repo is the package for our tools ArcStat
+The gpkx file ArcStat.gpkx in this repo is the package for our tools ArcStat. It can be downloaded from the releases sidebar.
 
 ### Usage  
 #### Arcstat will do different analysis depending on how many columns are selected.  
