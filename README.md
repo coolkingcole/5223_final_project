@@ -21,6 +21,7 @@ Descriptive stats
 Correlation for multiple feilds  
 Basic user interface  
 User Manual
+Release Plan
 
 # Fields
 ![image](./misc_assets/final_params_v3.PNG)
