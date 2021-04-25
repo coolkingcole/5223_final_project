@@ -34,6 +34,8 @@ This should solve any "ModuleNotFoundError: No module named X" errors
 Installation instructions are under the "Using geoprocessing packages" heading in this material from OSU GEOG 5223.
 [link to docs](/misc_assets/script-tools.html)
 
+Our full manual can be found [here](/misc_assets/ArcStat-User Manual.docx)
+
 The gpkx file ArcStat.gpkx in this repo is the package for our tools ArcStat. It can be downloaded from the releases sidebar.
 
 ### Usage  
