@@ -59,9 +59,3 @@ The gpkx file ArcStat.gpkx in this repo is the package for our tools ArcStat. It
 
 # Release Plan  
 [Link To Release Plan xlsx](/misc_assets/Giraffes_Agile.xlsx)  
-
-### Product backlog  
-#### Implemented features  
-todo
-#### Soon to be implemented features  
-todo
